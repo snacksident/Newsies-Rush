@@ -1,19 +1,27 @@
 /*DOM SELECTORS*/
 const canvas = document.querySelector("#canvas")
-
+const scoreBoard = document.querySelector(".score-board")
+document.addEventListener('keydown',(e)=>{
+    if(e.key === "a"){
+        
+        //player.throwPaper()
+    }else if(e.key === "d"){
+       // player.throwPaper()
+    }
+})
 
 
 
 /* GAME STATE */
 const ctx = canvas.getContext('2d')
 canvas.setAttribute("height", getComputedStyle(canvas)["height"])
-
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
+let userScore = 0
+let gameLoopInterval = setInterval(gameLoop, 1000) //game speed set by interval
 
-let gameLoopInterval = setInterval(gameLoop, 60) 
 /* GAME FUNCTIONS */
 
-//testing
+
 
 
 //houses all have a standard size.  we only pass in location of the house.
@@ -31,7 +39,7 @@ class House {
     }
     //change the y axis of the house, making it feel like you are moving.
     slide(){
-        this.y += 5
+        this.y++
     }
 }
 
@@ -39,36 +47,66 @@ class Deliverer {
     constructor(xLoc, yLoc){
         this.x = xLoc,
         this.y = yLoc,
-        this.width = 2,
-        this.height = 6
+        this.width = 4,
+        this.height = 15
     }
     render(){
-        ctx.strokeStyle = 'green'
+        ctx.fillStyle = 'green'
         ctx.lineWidth = 2
-        ctx.strokeRect(this.x,this.y,this.width,this.height)
+        ctx.fillRect(this.x,this.y,this.width,this.height)
+    }
+    throwPaper(){
+        
     }
 }
-let player = new Deliverer(200,300)
 
-const house1 = new House(5,5)
-const house2 = new House(500,5)
+class Newspaper {
+    static paperCount = 0
+    constructor(newX,newY){
+        this.x = newX
+        this.y = newY
+        this.width = 3,
+        this.height = 3
+    }
+    render(){
+        ctx.strokeStyle = "white"
+        ctx.lineWidth = 1
+        ctx.strokeRect(this.x,this.y,this.width,this.height)
+    }
+    flyRight(){
+        this.x += 2
+        this.y++
+    }
+    flyLeft(){
+        this.x -=2
+        this.y++
+    }
+}
 
-house1.render()
-//create mockup route
-    //create houses
-        //or house boundaries
 
+
+let newHouse = new House(5,5)
+let newPlayer = new Deliverer(300,300)
+let newPaper = new Newspaper(300,300)
 
 //create paperboy
-//make paperboy move
-//make paperboy throw newspaper
+
+    //make paperboy throw newspaper
 
 //every tick, move all houses down the y axis.
 function gameLoop() {
+    //generate houses(neighborhood)
+    //'slide' through neighborhood until timer runs out or finish line is it
     ctx.clearRect(0,0, canvas.width, canvas.height)
-    house1.render()
-    house2.render()
-    player.render()
-    house2.slide()
-    house1.slide()
+    scoreBoard.innerText = userScore
+    // newHouse.render()
+    newPlayer.render()
+    // newPaper.render()
+    newHouse.slide()
 }
+
+
+//when button is pressed
+//construct a new Newspaper object
+//render the object on the delivery person
+//get object to move correctly
