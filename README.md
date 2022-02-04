@@ -31,6 +31,17 @@ ___
 
 * Bicycle automatically rides through neighborhood, ability to toss papers left or right
 
+* Restart / Play Again button
+
+* Game ends when timer runs out or user completes route
+
+* Display score - updating as user scores points
+
+___
+## Stretch Goals:
+
+* Some houses have pets to chase you
+
 * User has *some* control of x/y location of bike
 
 * Score extra money for delivering the paper *accurately*
@@ -38,11 +49,6 @@ ___
 * Lose money for delivering to houses that have not subscribed to the newspaper
 
 * Create obstacles in the neighborhood that you can crash into - slowing you down.
-
-___
-## Stretch Goals:
-
-* Some houses have pets to chase you
 
 * Multiple difficulties
 
