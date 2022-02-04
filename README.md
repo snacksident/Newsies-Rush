@@ -17,7 +17,7 @@ ___
 
 * Javascript
 
-* Bootstrap for styling
+* Flex and grid for layout/styling
 
 ___
 
