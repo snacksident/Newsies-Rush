@@ -10,7 +10,6 @@ resetButton.addEventListener('click',()=>{
 })
 playButton.addEventListener('click',()=>{
     gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
-
 })
 
 let pressedKeys = {}
@@ -42,6 +41,9 @@ function detectPaperDelivery(){
     //check if a paper went into a *left side* houses bounds.
     paperArray.forEach((paper)=>{
         if(paper.x < 200){
+            console.log(`${paper} has crossed ${paper.x} x boundary`)
+        }
+        if(paper.x + paper.width > 500){
             console.log(`${paper} has crossed ${paper.x} x boundary`)
         }
     })
@@ -112,6 +114,12 @@ let newPaper = new Newspaper(300,300)
 let newPaper2 = new Newspaper(300,300)
 let newPaper3 = new Newspaper(300,300)
 let paperArray = [newPaper, newPaper2, newPaper3]
+let thrownPapersRight = []
+let thrownPapersLeft = []
+
+function paperThrowHandler(){
+
+}
 
 //every tick, move all houses down the y axis.
 function gameLoop() {
@@ -119,25 +127,23 @@ function gameLoop() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
 
+
     //when key is pressed - get next newspaper out of newspaper array
     //render newspaper, set newspaper in motion
+
+    //currently only renders/moves paper when button is pressed.  ideal reaction is: when button is pressed, render next newspaper in array and set in motion.
     for(let i = 0; i < paperArray.length; i++){
         if(pressedKeys.a){
-            paperArray[i].render()
-            paperArray[i].flyLeft()
+            thrownPapersLeft.push(paperArray[i])
         }
         if(pressedKeys.d){
-            paperArray[i].render()
-            paperArray[i].flyRight()
+            thrownPapersRight.push(paperArray[i])
         }
     }
-
+    
 
 
     //testing functionality
-    // newHouse.render()
-    // newPlayer.render()
-    // newHouse.slide()
     detectPaperDelivery()
 }
 
