@@ -9,24 +9,21 @@ resetButton.addEventListener('click',()=>{
     ctx.clearRect(0,0, canvas.width, canvas.height)
 })
 playButton.addEventListener('click',()=>{
-    gameLoopInterval = setInterval(gameLoop, 500) //game speed set by interval
+    gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
 
 })
 
-document.addEventListener('keydown',(e)=>{
-    for(let i = 0; i < paperArray.length; i++){
-        if(e.key === "a"){
-            //displays flying paper when key is held.  need to somehow call these functions in the gameloop when event/keypress happens.
-            paperArray[i].render()
-            paperArray[i].flyLeft()
-            console.log(`user pressed ${e.key}`)
-        }else if(e.key === "d"){
-            paperArray[i].render()
-            paperArray[i].flyRight()
-            console.log(`user pressed ${e.key}`)
-        }
-    }
-})
+let pressedKeys = {}
+
+// document.addEventListener('keydown',(e)=>{
+//         pressedKeys.push(e.key)
+// })
+// document.addEventListener('keyup', (e)=>{
+//     pressedKeys.pop(e.key)
+// })
+
+document.addEventListener('keydown', e => pressedKeys[e.key] = true)
+document.addEventListener('keyup', e => pressedKeys[e.key] = false)
 
 
 
@@ -42,7 +39,7 @@ let gameLoopInterval;
 /* GAME FUNCTIONS */
 
 function detectPaperDelivery(){
-    //check if a paper went into a houses rectangle.
+    //check if a paper went into a *left side* houses bounds.
     paperArray.forEach((paper)=>{
         if(paper.x < 200){
             console.log(`${paper} has crossed ${paper.x} x boundary`)
@@ -124,28 +121,22 @@ function gameLoop() {
 
     //when key is pressed - get next newspaper out of newspaper array
     //render newspaper, set newspaper in motion
-
-    
-
-
-    //        weston recommendation for letting papers fly
-    // for(let i = 0; i < paperArray.length; i++){
-    //     paperArray[i].render()
-    //     if(e.key === "a"){
-    //         paperArray[i].flyLeft
-    //     }
-    //     if(e.key === "d"){
-    //         paperArray[i].flyRight
-    //     }
-    // }
+    for(let i = 0; i < paperArray.length; i++){
+        if(pressedKeys.a){
+            paperArray[i].render()
+            paperArray[i].flyLeft()
+        }
+        if(pressedKeys.d){
+            paperArray[i].render()
+            paperArray[i].flyRight()
+        }
+    }
 
 
 
     //testing functionality
     // newHouse.render()
     // newPlayer.render()
-    // newPaper.render()
-    // newPaper.flyRight()
     // newHouse.slide()
     detectPaperDelivery()
 }
