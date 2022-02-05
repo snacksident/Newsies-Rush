@@ -118,7 +118,16 @@ let thrownPapersRight = []
 let thrownPapersLeft = []
 
 function paperThrowHandler(){
-
+    //when key is pressed - remove paper from paperArray and add to new thrownPapers array
+    if(pressedKeys.a){
+        thrownPapersLeft.push(paperArray[0])
+        paperArray.shift()
+    }
+    if(pressedKeys.d){
+        thrownPapersRight.push(paperArray[0])
+        paperArray.shift()
+    }
+    //render and move all papers that have been thrown
 }
 
 //every tick, move all houses down the y axis.
@@ -127,20 +136,19 @@ function gameLoop() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
 
-
-    //when key is pressed - get next newspaper out of newspaper array
-    //render newspaper, set newspaper in motion
-
-    //currently only renders/moves paper when button is pressed.  ideal reaction is: when button is pressed, render next newspaper in array and set in motion.
-    for(let i = 0; i < paperArray.length; i++){
-        if(pressedKeys.a){
-            thrownPapersLeft.push(paperArray[i])
-        }
-        if(pressedKeys.d){
-            thrownPapersRight.push(paperArray[i])
-        }
-    }
+    newPlayer.render()
+    newHouse.render()
+    newHouse.slide()
     
+    paperThrowHandler()
+    for(let i = 0; i < thrownPapersLeft.length; i++){
+        thrownPapersLeft[i].render()
+        thrownPapersLeft[i].flyLeft()
+    }
+    for(let i = 0; i < thrownPapersRight.length; i++){
+        thrownPapersRight[i].render()
+        thrownPapersRight[i].flyRight()
+    }
 
 
     //testing functionality
