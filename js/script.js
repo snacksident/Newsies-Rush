@@ -37,12 +37,17 @@ let userScore = 0
 let gameLoopInterval;
 /* GAME FUNCTIONS */
 
+
+//refactor to check left papers and right papers separately?
 function detectPaperDelivery(){
-    //check if a paper went into a *left side* houses bounds.
-    paperArray.forEach((paper)=>{
-        if(paper.x < 200){
+    //check if a papers left side crossed into the "left boundary"
+    thrownPapersLeft.forEach((paper)=>{
+        if(paper.x < 55){
             console.log(`${paper} has crossed ${paper.x} x boundary`)
+            thrownPapersLeft.shift()
         }
+    })
+    thrownPapersRight.forEach((paper)=>{
         if(paper.x + paper.width > 500){
             console.log(`${paper} has crossed ${paper.x} x boundary`)
         }
@@ -104,9 +109,10 @@ class Newspaper {
     }
     flyLeft(){
         this.x -=2
-        this.y++
+        // this.y++
     }
 }
+
 
 let newHouse = new House(5,5)
 let newPlayer = new Deliverer(300,300)
