@@ -37,8 +37,18 @@ canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let userScore = 0
 
 // let gameLoopInterval = setInterval(gameLoop, 500) //game speed set by interval
+// currently turning gameloopinterval on and off with the "play game" and "end game" buttons. end game clears screen but pauses object statuses.
 let gameLoopInterval;
 /* GAME FUNCTIONS */
+
+function detectPaperDelivery(){
+    //check if a paper went into a houses rectangle.
+    paperArray.forEach((paper)=>{
+        if(paper.x < 200){
+            console.log(`${paper} has crossed ${paper.x} x boundary`)
+        }
+    })
+}
 
 //houses all have a standard size.  we only pass in location of the house.
 class House {
@@ -137,6 +147,7 @@ function gameLoop() {
     // newPaper.render()
     // newPaper.flyRight()
     // newHouse.slide()
+    detectPaperDelivery()
 }
 
 
