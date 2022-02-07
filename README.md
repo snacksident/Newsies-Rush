@@ -33,7 +33,7 @@ ___
 
 * Restart / Play Again button
 
-* Game ends when timer runs out or user completes route
+* Game ends when newspaper runs out or user score threshold is met
 
 * Display score - updating as user scores points
 
