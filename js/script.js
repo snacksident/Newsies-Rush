@@ -1,9 +1,13 @@
 /*DOM SELECTORS*/
 const canvas = document.querySelector("#canvas")
 const scoreBoard = document.querySelector(".score-board")
+const paperCountDisplay = document.querySelector(".paper-count")
 const resetButton = document.querySelector(".reset-button")
 const playButton = document.querySelector(".play-button")
+
+
 //clears gameloop interval, rendering game over.  also clears canvas to blank state.
+//currently functions like a pause button.  screen gets cleared but all rendered objects still have their positions set.
 resetButton.addEventListener('click',()=>{
     clearInterval(gameLoopInterval)
     ctx.clearRect(0,0, canvas.width, canvas.height)
@@ -12,8 +16,8 @@ playButton.addEventListener('click',()=>{
     gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
 })
 
+//tracking keypresses inside object with boolean values.  
 let pressedKeys = {}
-
 document.addEventListener('keydown', e => pressedKeys[e.key] = true)
 document.addEventListener('keyup', e => pressedKeys[e.key] = false)
 
@@ -24,7 +28,6 @@ canvas.setAttribute("height", getComputedStyle(canvas)["height"])
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let userScore = 0
 
-// let gameLoopInterval = setInterval(gameLoop, 500) //game speed set by interval
 // currently turning gameloopinterval on and off with the "play game" and "end game" buttons. end game clears screen but pauses object statuses.
 let gameLoopInterval;
 /* GAME FUNCTIONS */
@@ -99,9 +102,6 @@ class Deliverer {
         ctx.lineWidth = 2
         ctx.fillRect(this.x,this.y,this.width,this.height)
     }
-    throwPaper(){
-        
-    }
 }
 //for the thrown newspapers
 class Newspaper {
@@ -118,11 +118,11 @@ class Newspaper {
     }
     //the paper flies 2px right and 1px down per cycle - staying in line with the houses but heading towards them - left and right
     flyRight(){
-        this.x += 2
+        this.x += 5
         // this.y++ /*for making the papers fly 'down' the screen too*/
     }
     flyLeft(){
-        this.x -=2
+        this.x -=5
         // this.y++ /*for making the papers fly 'down' the screen too*/
     }
 }
@@ -135,9 +135,9 @@ let rightHouse = new House(600,5,true)
 let rightHouse2 = new House(600, 100,false)
 let rightHouse3 = new House(600,230,true)
 let newPlayer = new Deliverer(300,300)
-let newPaper = new Newspaper(300,300)
-let newPaper2 = new Newspaper(300,300)
-let newPaper3 = new Newspaper(300,300)
+let newPaper = new Newspaper(newPlayer.x,newPlayer.y)
+let newPaper2 = new Newspaper(newPlayer.x,newPlayer.y)
+let newPaper3 = new Newspaper(newPlayer.x,newPlayer.y)
 let newPaper4 = new Newspaper(newPlayer.x,newPlayer.y)
 let paperArray = [newPaper, newPaper2, newPaper3, newPaper4]
 let neighborhood = [leftHouse, rightHouse, leftHouse2, rightHouse2, leftHouse3, rightHouse3]
@@ -151,21 +151,58 @@ function houseMover(){
     neighborhood.forEach((house)=>{
         house.render()
         house.slide()
-        if(house.y > 300){
+        if(house.y > 350){
             house.y = -80
+            house.isSubscriber = subscriberRandomizer()
         }
     })
 }
 
-function paperThrowHandler(){
-    //when key is pressed - remove paper from paperArray and add to new thrownPapers array
+//checks key press inputs for 4 movement directions
+function delivererMover(){
     if(pressedKeys.a){
-        thrownPapersLeft.push(paperArray[0])
-        paperArray.shift()
+        newPlayer.x -= 2
     }
     if(pressedKeys.d){
-        thrownPapersRight.push(paperArray[0])
-        paperArray.shift()
+        newPlayer.x += 2
+    }
+    if(pressedKeys.w){
+        newPlayer.y -= 2
+    }
+    if(pressedKeys.s){
+        newPlayer.y += 2
+    }
+}
+//randomly selects if a house is a subscriber or not when being replaced
+function subscriberRandomizer(){
+    let rand = Math.floor(Math.random() * 2)
+    if(rand === 1){
+        return true
+    }
+    else{
+        return false
+    }
+}
+
+function paperThrowHandler(){
+    //when key is pressed - remove paper from paperArray and add to new thrownPapers array
+    if(paperArray.length != 0){
+        if(pressedKeys.q){
+            //set paper location to users current location
+            paperArray[0].x = newPlayer.x
+            paperArray[0].y = newPlayer.y
+            //move into separate array depending on direction its thrown
+            thrownPapersLeft.push(paperArray[0])
+            paperArray.shift()
+        }
+        if(pressedKeys.e){
+            //set paper location to users current location
+            paperArray[0].x = newPlayer.x
+            paperArray[0].y = newPlayer.y
+            //move into separate array depending on direction its thrown
+            thrownPapersRight.push(paperArray[0])
+            paperArray.shift()
+        }
     }
     //render and move all papers that have been thrown
     for(let i = 0; i < thrownPapersLeft.length; i++){
@@ -179,14 +216,23 @@ function paperThrowHandler(){
     detectPaperDelivery()
 }
 
+//checks to see if all newspaper arrays are empty (out of paper) - no more ways to get points
+function gameOverCheck(){
+    if(paperArray.length === 0 && thrownPapersLeft.length == 0 && thrownPapersRight == 0){
+        console.log("game over you're out of newspapers")
+    }
+}
 
 function gameLoop() {
     //generate houses(neighborhood)
     ctx.clearRect(0,0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
+    paperCountDisplay.innerText = paperArray.length + "papers left"
     houseMover()
+    delivererMover()
     newPlayer.render()
     paperThrowHandler()
+    gameOverCheck()
     //testing functionality
 }
 
