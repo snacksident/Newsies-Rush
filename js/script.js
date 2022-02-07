@@ -35,13 +35,19 @@ function detectPaperDelivery(){
     //check if a papers left side crossed into the "left boundary"
     thrownPapersLeft.forEach((paper)=>{
         if(paper.x < 55){
-            console.log(`${paper} has crossed ${paper.x} x boundary`)
-            thrownPapersLeft.shift()
+            //check if it hit the correct Y value of the each house as well
+            neighborhoodLeft.forEach(house=>{
+                if(paper.y < house.y + house.height && paper.y > house.y){
+                    console.log(`house on left hit!!`)
+                    thrownPapersLeft.shift()
+                }
+            })
         }
     })
+    //check if paper crossed into the "right boundary"
     thrownPapersRight.forEach((paper)=>{
         if(paper.x + paper.width > 500){
-            console.log(`${paper} has crossed ${paper.x} x boundary`)
+            console.log(`${paper} has crossed ${paper.x}`)
             thrownPapersRight.shift()
         }
     })
@@ -107,25 +113,31 @@ class Newspaper {
 }
 
 
-let newHouse = new House(5,5)
-let newHouse2 = new House(600,5)
+let leftHouse = new House(5,5)
+let leftHouse2 = new House(5,115)
+let leftHouse3 = new House(5,225)
+let rightHouse = new House(600,5)
+let rightHouse2 = new House(600, 100)
+let rightHouse3 = new House(600,230)
 let newPlayer = new Deliverer(300,300)
 let newPaper = new Newspaper(300,300)
 let newPaper2 = new Newspaper(300,300)
 let newPaper3 = new Newspaper(300,300)
-let paperArray = [newPaper, newPaper2, newPaper3]
-let neighborhood = [newHouse, newHouse2]
+let newPaper4 = new Newspaper(newPlayer.x,newPlayer.y)
+let paperArray = [newPaper, newPaper2, newPaper3, newPaper4]
+let neighborhood = [leftHouse, rightHouse, leftHouse2, rightHouse2, leftHouse3, rightHouse3]
+let neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
+let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
 let thrownPapersRight = []
 let thrownPapersLeft = []
 
-//check for when a house slides off the screen, remove it from neighborhood and add it back to the top
-
+//check for when a house slides off the screen, remove it from neighborhood and add it back to the top - "endless" functionality
 function houseMover(){
     neighborhood.forEach((house)=>{
         house.render()
         house.slide()
         if(house.y > 300){
-            house.y = -30
+            house.y = -80
         }
     })
 }
@@ -149,6 +161,7 @@ function paperThrowHandler(){
         thrownPapersRight[i].render()
         thrownPapersRight[i].flyRight()
     }
+    detectPaperDelivery()
 }
 
 
@@ -157,11 +170,9 @@ function gameLoop() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
     houseMover()
-    // newHouse.render()
-    // newHouse.slide()
+    newPlayer.render()
     paperThrowHandler()
     //testing functionality
-    detectPaperDelivery()
 }
 
 
