@@ -19,7 +19,8 @@ canvas{
     grid-template-columns: .25fr .5fr .25fr;
     grid-template-areas: "top-left top-left top-right"
                           "game game game"
-                          "bottom-left bottom-center bottom-right";
+                          "bottom-left bottom-center bottom-right"
+                          "footer footer footer";
 }
 
 #top-left, #top-right, #bottom-left, #bottom-center, #bottom-right {
@@ -47,6 +48,14 @@ canvas{
 
 #bottom-right{
     grid-area: bottom-right;
+}
+
+#footer{
+    grid-area: footer;
+}
+
+.directions{
+    background-color: white
 }
 
 main{
