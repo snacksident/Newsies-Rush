@@ -42,11 +42,14 @@ function detectPaperDelivery(){
         if(paper.x < 55){
             //check if it hit the correct Y value of the each house as well
             neighborhoodLeft.forEach(house=>{
-                if(paper.y < house.y + house.height && paper.y > house.y){
+                if((paper.y < house.y + house.height && paper.y > house.y) && !house.isDelivered){
                     console.log(`house on left hit!!`)
                     if(house.isSubscriber){
                         userScore += 1000
+                    }else if(!house.isSubscriber){
+                        userScore -= 500
                     }
+                    house.isDelivered = true
                     thrownPapersLeft.shift()
                 }
             })
@@ -58,11 +61,14 @@ function detectPaperDelivery(){
         if(paper.x + paper.width > 600){
             neighborhoodRight.forEach(house=>{
                 //check if it hit corrects y value of house
-                if(paper.y < house.y + house.height && paper.y > house.y){
+                if((paper.y < house.y + house.height && paper.y > house.y) && !house.isDelivered){
                     console.log(`house on right hit!!!!`)
                     if(house.isSubscriber){
                         userScore += 1000
+                    }else if(!house.isSubscriber){
+                        userScore -= 500
                     }
+                    house.isDelivered = true
                     thrownPapersRight.shift()
                 }
             })
@@ -78,9 +84,14 @@ class House {
         this.width = 50,
         this.height = 80
         this.isSubscriber = subscriberStatus
+        this.isDelivered = false
     }
     render(){
-        ctx.strokeStyle = 'red'
+        if(this.isSubscriber){
+            ctx.strokeStyle = 'green'
+        }else{
+            ctx.strokeStyle = 'red'
+        }
         ctx.lineWidth = 2
         ctx.strokeRect(this.x,this.y,this.width,this.height)
     }
@@ -154,6 +165,8 @@ function houseMover(){
         if(house.y > 350){
             house.y = -80
             house.isSubscriber = subscriberRandomizer()
+            //set house to be valid for points again
+            house.isDelivered = false
         }
     })
 }
