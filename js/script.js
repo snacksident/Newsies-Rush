@@ -10,10 +10,11 @@ const playButton = document.querySelector(".play-button")
 //currently functions like a pause button.  screen gets cleared but all rendered objects still have their positions set.
 resetButton.addEventListener('click',()=>{
     clearInterval(gameLoopInterval)
+    resetGameState()
     ctx.clearRect(0,0, canvas.width, canvas.height)
+    //reset all game-state values in here
 })
 playButton.addEventListener('click',()=>{
-
     gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
 })
 
@@ -144,19 +145,22 @@ class Newspaper {
     }
 }
 
-
 let leftHouse = new House(5,5,false)
 let leftHouse2 = new House(5,115,true)
 let leftHouse3 = new House(5,225,false)
+
 let rightHouse = new House(600,5,true)
 let rightHouse2 = new House(600, 100,false)
 let rightHouse3 = new House(600,230,true)
+
 let newPlayer = new Deliverer(300,300)
+
 let newPaper = new Newspaper(newPlayer.x,newPlayer.y)
 let newPaper2 = new Newspaper(newPlayer.x,newPlayer.y)
 let newPaper3 = new Newspaper(newPlayer.x,newPlayer.y)
 let newPaper4 = new Newspaper(newPlayer.x,newPlayer.y)
-let paperArray = [newPaper, newPaper2, newPaper3, newPaper4]
+let newPaper5 = new Newspaper(newPlayer.x,newPlayer.y)
+let paperArray = [newPaper, newPaper2, newPaper3, newPaper4, newPaper5]
 let neighborhood = [leftHouse, rightHouse, leftHouse2, rightHouse2, leftHouse3, rightHouse3]
 let neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
 let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
@@ -245,6 +249,29 @@ function gameOverCheck(){
         console.log(`You ended with ${userScore} points!`)
         clearInterval(gameLoopInterval)
     }
+}
+
+function resetGameState(){
+    userScore = 0
+    
+    leftHouse = new House(5,5,false)
+    leftHouse2 = new House(5,115,true)
+    leftHouse3 = new House(5,225,false)
+    rightHouse = new House(600,5,true)
+    rightHouse2 = new House(600, 100,false)
+    rightHouse3 = new House(600,230,true)
+    newPlayer = new Deliverer(300,300)
+    newPaper = new Newspaper(newPlayer.x,newPlayer.y)
+    newPaper2 = new Newspaper(newPlayer.x,newPlayer.y)
+    newPaper3 = new Newspaper(newPlayer.x,newPlayer.y)
+    newPaper4 = new Newspaper(newPlayer.x,newPlayer.y)
+    newPaper5 = new Newspaper(newPlayer.x,newPlayer.y)
+    paperArray = [newPaper, newPaper2, newPaper3, newPaper4, newPaper5]
+    neighborhood = [leftHouse, rightHouse, leftHouse2, rightHouse2, leftHouse3, rightHouse3]
+    neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
+    neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
+    thrownPapersRight = []
+    thrownPapersLeft = []
 }
 
 function gameLoop() {
