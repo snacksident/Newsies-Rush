@@ -35,11 +35,15 @@ let gameLoopInterval;
 function detectPaperDelivery(){
     //check if a papers left side crossed into the "left boundary"
     thrownPapersLeft.forEach((paper)=>{
+        //left side value hard coded in as no houses will be placed beyond 55px mark for now
         if(paper.x < 55){
             //check if it hit the correct Y value of the each house as well
             neighborhoodLeft.forEach(house=>{
                 if(paper.y < house.y + house.height && paper.y > house.y){
                     console.log(`house on left hit!!`)
+                    if(house.isSubscriber){
+                        userScore += 1000
+                    }
                     thrownPapersLeft.shift()
                 }
             })
@@ -47,11 +51,15 @@ function detectPaperDelivery(){
     })
     //check if paper crossed into the "right boundary"
     thrownPapersRight.forEach((paper)=>{
+        //right side value hard coded in as houses will only be placed on the 600px mark for now
         if(paper.x + paper.width > 600){
             neighborhoodRight.forEach(house=>{
                 //check if it hit corrects y value of house
                 if(paper.y < house.y + house.height && paper.y > house.y){
                     console.log(`house on right hit!!!!`)
+                    if(house.isSubscriber){
+                        userScore += 1000
+                    }
                     thrownPapersRight.shift()
                 }
             })
@@ -61,11 +69,12 @@ function detectPaperDelivery(){
 
 //houses all have a standard size.  we only pass in location of the house.
 class House {
-    constructor(xLoc,yLoc){
+    constructor(xLoc,yLoc,subscriberStatus){
         this.x = xLoc,
         this.y = yLoc,
         this.width = 50,
         this.height = 80
+        this.isSubscriber = subscriberStatus
     }
     render(){
         ctx.strokeStyle = 'red'
@@ -119,12 +128,12 @@ class Newspaper {
 }
 
 
-let leftHouse = new House(5,5)
-let leftHouse2 = new House(5,115)
-let leftHouse3 = new House(5,225)
-let rightHouse = new House(600,5)
-let rightHouse2 = new House(600, 100)
-let rightHouse3 = new House(600,230)
+let leftHouse = new House(5,5,false)
+let leftHouse2 = new House(5,115,true)
+let leftHouse3 = new House(5,225,false)
+let rightHouse = new House(600,5,true)
+let rightHouse2 = new House(600, 100,false)
+let rightHouse3 = new House(600,230,true)
 let newPlayer = new Deliverer(300,300)
 let newPaper = new Newspaper(300,300)
 let newPaper2 = new Newspaper(300,300)
