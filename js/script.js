@@ -14,16 +14,8 @@ playButton.addEventListener('click',()=>{
 
 let pressedKeys = {}
 
-// document.addEventListener('keydown',(e)=>{
-//         pressedKeys.push(e.key)
-// })
-// document.addEventListener('keyup', (e)=>{
-//     pressedKeys.pop(e.key)
-// })
-
 document.addEventListener('keydown', e => pressedKeys[e.key] = true)
 document.addEventListener('keyup', e => pressedKeys[e.key] = false)
-
 
 
 /* GAME STATE */
@@ -50,6 +42,7 @@ function detectPaperDelivery(){
     thrownPapersRight.forEach((paper)=>{
         if(paper.x + paper.width > 500){
             console.log(`${paper} has crossed ${paper.x} x boundary`)
+            thrownPapersRight.shift()
         }
     })
 }
@@ -105,23 +98,37 @@ class Newspaper {
     //the paper flies 2px right and 1px down per cycle - staying in line with the houses but heading towards them - left and right
     flyRight(){
         this.x += 2
-        this.y++
+        // this.y++ /*for making the papers fly 'down' the screen too*/
     }
     flyLeft(){
         this.x -=2
-        // this.y++
+        // this.y++ /*for making the papers fly 'down' the screen too*/
     }
 }
 
 
 let newHouse = new House(5,5)
+let newHouse2 = new House(600,5)
 let newPlayer = new Deliverer(300,300)
 let newPaper = new Newspaper(300,300)
 let newPaper2 = new Newspaper(300,300)
 let newPaper3 = new Newspaper(300,300)
 let paperArray = [newPaper, newPaper2, newPaper3]
+let neighborhood = [newHouse, newHouse2]
 let thrownPapersRight = []
 let thrownPapersLeft = []
+
+//check for when a house slides off the screen, remove it from neighborhood and add it back to the top
+
+function houseMover(){
+    neighborhood.forEach((house)=>{
+        house.render()
+        house.slide()
+        if(house.y > 300){
+            house.y = -30
+        }
+    })
+}
 
 function paperThrowHandler(){
     //when key is pressed - remove paper from paperArray and add to new thrownPapers array
@@ -134,19 +141,6 @@ function paperThrowHandler(){
         paperArray.shift()
     }
     //render and move all papers that have been thrown
-}
-
-//every tick, move all houses down the y axis.
-function gameLoop() {
-    //generate houses(neighborhood)
-    ctx.clearRect(0,0, canvas.width, canvas.height)
-    scoreBoard.innerText = userScore
-
-    newPlayer.render()
-    newHouse.render()
-    newHouse.slide()
-    
-    paperThrowHandler()
     for(let i = 0; i < thrownPapersLeft.length; i++){
         thrownPapersLeft[i].render()
         thrownPapersLeft[i].flyLeft()
@@ -155,8 +149,17 @@ function gameLoop() {
         thrownPapersRight[i].render()
         thrownPapersRight[i].flyRight()
     }
+}
 
 
+function gameLoop() {
+    //generate houses(neighborhood)
+    ctx.clearRect(0,0, canvas.width, canvas.height)
+    scoreBoard.innerText = userScore
+    houseMover()
+    // newHouse.render()
+    // newHouse.slide()
+    paperThrowHandler()
     //testing functionality
     detectPaperDelivery()
 }
