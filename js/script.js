@@ -30,7 +30,8 @@ let gameLoopInterval;
 /* GAME FUNCTIONS */
 
 
-//refactor to check left papers and right papers separately?
+/* kind of works, needs a re-visit */
+/* currently will tell a paper it was delivered if the house slides into it from the top as well*/
 function detectPaperDelivery(){
     //check if a papers left side crossed into the "left boundary"
     thrownPapersLeft.forEach((paper)=>{
@@ -46,9 +47,14 @@ function detectPaperDelivery(){
     })
     //check if paper crossed into the "right boundary"
     thrownPapersRight.forEach((paper)=>{
-        if(paper.x + paper.width > 500){
-            console.log(`${paper} has crossed ${paper.x}`)
-            thrownPapersRight.shift()
+        if(paper.x + paper.width > 600){
+            neighborhoodRight.forEach(house=>{
+                //check if it hit corrects y value of house
+                if(paper.y < house.y + house.height && paper.y > house.y){
+                    console.log(`house on right hit!!!!`)
+                    thrownPapersRight.shift()
+                }
+            })
         }
     })
 }
@@ -131,7 +137,7 @@ let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
 let thrownPapersRight = []
 let thrownPapersLeft = []
 
-//check for when a house slides off the screen, remove it from neighborhood and add it back to the top - "endless" functionality
+//check for when a house 'slides off' the screen, remove it from neighborhood and add it back to the top - "endless" functionality
 function houseMover(){
     neighborhood.forEach((house)=>{
         house.render()
