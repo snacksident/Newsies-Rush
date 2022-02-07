@@ -13,6 +13,7 @@ resetButton.addEventListener('click',()=>{
     ctx.clearRect(0,0, canvas.width, canvas.height)
 })
 playButton.addEventListener('click',()=>{
+
     gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
 })
 
@@ -43,16 +44,17 @@ function detectPaperDelivery(){
             //check if it hit the correct Y value of the each house as well
             neighborhoodLeft.forEach(house=>{
                 if((paper.y < house.y + house.height && paper.y > house.y) && !house.isDelivered){
-                    console.log(`house on left hit!!`)
                     if(house.isSubscriber){
+                        console.log(`subscribers house on left hit!!`)
                         userScore += 1000
                     }else if(!house.isSubscriber){
+                        console.log(`non subscriber on left hit`)
                         userScore -= 500
                     }
                     house.isDelivered = true
-                    thrownPapersLeft.shift()
                 }
             })
+            thrownPapersLeft.shift()
         }
     })
     //check if paper crossed into the "right boundary"
@@ -62,16 +64,17 @@ function detectPaperDelivery(){
             neighborhoodRight.forEach(house=>{
                 //check if it hit corrects y value of house
                 if((paper.y < house.y + house.height && paper.y > house.y) && !house.isDelivered){
-                    console.log(`house on right hit!!!!`)
                     if(house.isSubscriber){
+                        console.log(`subscriber on right hit!!!!`)
                         userScore += 1000
                     }else if(!house.isSubscriber){
+                        console.log(`nonsubscriber on right hit!!!!`)
                         userScore -= 500
                     }
                     house.isDelivered = true
-                    thrownPapersRight.shift()
                 }
             })
+            thrownPapersRight.shift()
         }
     })
 }
@@ -90,7 +93,10 @@ class House {
         if(this.isSubscriber){
             ctx.strokeStyle = 'green'
         }else{
-            ctx.strokeStyle = 'red'
+            ctx.strokeStyle = 'blue'
+        }
+        if(this.isDelivered){
+            ctx.strokeStyle = 'yellow'
         }
         ctx.lineWidth = 2
         ctx.strokeRect(this.x,this.y,this.width,this.height)
@@ -173,17 +179,20 @@ function houseMover(){
 
 //checks key press inputs for 4 movement directions
 function delivererMover(){
-    if(pressedKeys.a){
-        newPlayer.x -= 2
-    }
-    if(pressedKeys.d){
-        newPlayer.x += 2
-    }
-    if(pressedKeys.w){
-        newPlayer.y -= 2
-    }
-    if(pressedKeys.s){
-        newPlayer.y += 2
+    //find way to not let player drive off board.  check x/y coords to make sure they're in contained area.
+    
+        if(pressedKeys.a){
+            newPlayer.x -= 2
+        }
+        if(pressedKeys.d){
+            newPlayer.x += 2
+        }
+        if(pressedKeys.w){
+            newPlayer.y -= 2
+        }
+        if(pressedKeys.s){
+            newPlayer.y += 2
+        
     }
 }
 //randomly selects if a house is a subscriber or not when being replaced
@@ -231,8 +240,10 @@ function paperThrowHandler(){
 
 //checks to see if all newspaper arrays are empty (out of paper) - no more ways to get points
 function gameOverCheck(){
-    if(paperArray.length === 0 && thrownPapersLeft.length == 0 && thrownPapersRight == 0){
+    if(paperArray.length === 0 && thrownPapersLeft.length === 0 && thrownPapersRight.length === 0){
         console.log("game over you're out of newspapers")
+        console.log(`You ended with ${userScore} points!`)
+        clearInterval(gameLoopInterval)
     }
 }
 
@@ -246,7 +257,6 @@ function gameLoop() {
     newPlayer.render()
     paperThrowHandler()
     gameOverCheck()
-    //testing functionality
 }
 
 
