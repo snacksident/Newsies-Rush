@@ -36,7 +36,7 @@ let gameLoopInterval
 //houses all have a standard size.  we only pass in location of the house.
 class House {
     constructor(xLoc, yLoc) {
-        ;(this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
+        (this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
         this.isSubscriber = subscriberRandomizer()
         this.isDelivered = false
     }
@@ -44,13 +44,15 @@ class House {
         if (this.isSubscriber) {
             ctx.strokeStyle = "green"
         } else {
-            ctx.strokeStyle = "blue"
+            ctx.strokeStyle = "red"
         }
         if (this.isDelivered) {
             ctx.strokeStyle = "yellow"
         }
-        ctx.lineWidth = 2
+        ctx.fillStyle = "salmon"
+        ctx.lineWidth = 3
         ctx.strokeRect(this.x, this.y, this.width, this.height)
+        ctx.fillRect(this.x,this.y,this.width,this.height)
     }
     //change the y axis of the house, simulating movement.
     slide() {
@@ -60,9 +62,12 @@ class House {
 //for the paperperson
 class Deliverer {
     constructor(xLoc, yLoc) {
-        ;(this.x = xLoc), (this.y = yLoc), (this.width = 4), (this.height = 15)
+        (this.x = xLoc), (this.y = yLoc), (this.width = 4), (this.height = 15), (this.hasPowerup = false)
     }
     render() {
+        if(this.hasPowerup){
+
+        }
         ctx.fillStyle = "green"
         ctx.lineWidth = 2
         ctx.fillRect(this.x, this.y, this.width, this.height)
@@ -172,17 +177,11 @@ function houseMover() {
 //checks key press inputs for 4 movement directions
 //need to add a way to keep user within certain boundaries
 function delivererMover() {
-    //if player is inside boundaries, move.  do not allow player to cross out of bounds.
-
-    // if (newPlayer.y > 100 && newPlayer.y < 600)
-    // if (newPlayer.x > 100 && newPlayer.x < 600)
-
     if(newPlayer.x < 600){
         if (pressedKeys.d) {
             newPlayer.x += 2
         }
     }
-
     if (newPlayer.x > 100) {
         if (pressedKeys.a) {
             newPlayer.x -= 2
@@ -198,15 +197,12 @@ function delivererMover() {
             newPlayer.y += 2
         }
     }
+    newPlayer.render()
 }
 //randomly selects if a house is a subscriber or not when being replaced
 function subscriberRandomizer() {
-    let rand = Math.floor(Math.random() * 2)
-    if (rand === 1) {
-        return true
-    } else {
-        return false
-    }
+    const rand = Math.floor(Math.random() * 2)
+    return rand === 1
 }
 
 /* kind of works, needs a re-visit */
@@ -224,10 +220,8 @@ function detectPaperDelivery() {
                     !house.isDelivered
                 ) {
                     if (house.isSubscriber) {
-                        console.log(`subscribers house on left hit!!`)
                         userScore += 1000
                     } else if (!house.isSubscriber) {
-                        console.log(`non subscriber on left hit`)
                         userScore -= 500
                     }
                     house.isDelivered = true
@@ -248,10 +242,8 @@ function detectPaperDelivery() {
                     !house.isDelivered
                 ) {
                     if (house.isSubscriber) {
-                        console.log(`subscriber on right hit!!!!`)
                         userScore += 1000
                     } else if (!house.isSubscriber) {
-                        console.log(`nonsubscriber on right hit!!!!`)
                         userScore -= 500
                     }
                     house.isDelivered = true
@@ -301,22 +293,19 @@ function gameOverCheck() {
         thrownPapersLeft.length === 0 &&
         thrownPapersRight.length === 0
     ) {
-        console.log("game over you're out of newspapers")
         scoreBoard.innerText = `Game Over - Total score ${userScore}`
-        console.log(`You ended with ${userScore} points!`)
         clearInterval(gameLoopInterval)
     }
 }
 
 function updatePaperCountDisplay() {
-    if (paperArray.length > 0) {
-        paperCountDisplay.innerText = paperArray.length + " papers left"
-    } else {
-        paperCountDisplay.innerText = "no papers left!"
-    }
+    const sentence = paperArray.length > 0 ? `${paperArray.length} papers left` : "no papers left!"
+    paperCountDisplay.innerText = sentence
 }
 
+//currently resets all gamestate variables back to "initial" value.
 function resetGameState() {
+    userScore = 0
     leftHouse = new House(5, 5)
     leftHouse2 = new House(5, 115)
     leftHouse3 = new House(5, 225)
@@ -367,7 +356,9 @@ function resetGameState() {
     thrownPapersLeft = []
 }
 //check if player hit powerup for bonus
-function powerupCollision() {}
+function powerupCollision() {
+    
+}
 
 function gameLoop() {
     //generate houses(neighborhood)
@@ -377,6 +368,5 @@ function gameLoop() {
     paperThrowHandler()
     houseMover()
     delivererMover()
-    newPlayer.render()
     gameOverCheck()
 }
