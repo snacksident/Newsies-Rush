@@ -98,9 +98,9 @@ class Newspaper {
 }
 
 class Powerup {
-    constructor() {
-        this.x = 200
-        this.y = 200
+    constructor(newX, newY) {
+        this.x = newX
+        this.y = newY
         this.width = 5
         this.height = 5
     }
@@ -111,7 +111,11 @@ class Powerup {
     }
 }
 
-let testPower = new Powerup()
+let powerup1 = new Powerup(getRandomInBoundsXValue(),getRandomInBoundsYValue())
+let powerup2 = new Powerup(200,200)
+let powerup3 = new Powerup(250,200)
+let powerupArray = [powerup1,powerup2,powerup3]
+let placedPowerups = []
 
 let leftHouse = new House(5, 5)
 let leftHouse2 = new House(5, 115)
@@ -208,8 +212,6 @@ function subscriberRandomizer() {
     return rand === 1
 }
 
-/* kind of works, needs a re-visit */
-/* currently will tell a paper it was delivered if the house slides into it from the top as well*/
 function detectPaperDelivery() {
     //check if a papers left side crossed into the "left boundary"
     thrownPapersLeft.forEach((paper) => {
@@ -309,6 +311,13 @@ function updatePaperCountDisplay() {
 //currently resets all gamestate variables back to "initial" value.
 function resetGameState() {
     userScore = 0
+
+    powerup1 = new Powerup(getRandomInBoundsXValue(),getRandomInBoundsYValue())
+    powerup2 = new Powerup(200,200)
+    powerup3 = new Powerup(250,200)
+    powerupArray = [powerup1,powerup2,powerup3]
+    placedPowerups = []
+
     leftHouse = new House(5, 5)
     leftHouse2 = new House(5, 115)
     leftHouse3 = new House(5, 225)
@@ -360,20 +369,36 @@ function resetGameState() {
 }
 
 function collectNewspaperCheck() {
-    //if user hits a newspaper on the ground, add to the newspaper array to make throwable
-    //check if user hits powerup
-    //on collision, add new paper to paperArray
-        //and remove powerup from screen
-    if(newPlayer.x < testPower.x + testPower.height && /* check player left vs powerup right*/
-        newPlayer.x + newPlayer.width > testPower.x  && /* check player right vs powerup left */
-        newPlayer.y < testPower.y + testPower.height && /* check player top vs powerup bottom */
-        newPlayer.y + newPlayer.height > testPower.y /* check player bottom vs powerup top */
-        ){ 
-        console.log("hit bonus newspaper")
-        paperArray.push(bonusPaper)
-        //temporary code to make powerup go away
-        testPower.x = -100
-        testPower.y = -100
+    placedPowerups.forEach((power)=>{
+        if(newPlayer.x < power.x + power.height && /* check player left vs powerup right*/
+            newPlayer.x + newPlayer.width > power.x  && /* check player right vs powerup left */
+            newPlayer.y < power.y + power.height && /* check player top vs powerup bottom */
+            newPlayer.y + newPlayer.height > power.y /* check player bottom vs powerup top */
+            ){ 
+            console.log("hit bonus newspaper")
+            paperArray.push(bonusPaper)
+            //temporary code to make powerup go away
+            power.x = -100
+            power.y = -100
+        }
+    })
+}
+
+function getRandomInBoundsXValue(){
+    return Math.floor(Math.random() * (600 - 100 + 1) +100)
+}
+function getRandomInBoundsYValue(){
+    return Math.floor(Math.random() * (350 - 50 +1)+50)
+}
+function placeExtraNewspapers(){
+    if(powerupArray!= 0){
+        powerupArray[0].x = getRandomInBoundsXValue()
+        powerupArray[0].y = getRandomInBoundsYValue()
+        placedPowerups.push(powerupArray[0])
+        powerupArray.shift()
+    }
+    for(let i = 0; i<placedPowerups.length; i++){
+        placedPowerups[i].render()
     }
 }
 
@@ -383,9 +408,10 @@ function gameLoop() {
     scoreBoard.innerText = userScore
     updatePaperCountDisplay()
     paperThrowHandler()
+    powerup1.render()
     houseMover()
+    placeExtraNewspapers()
     collectNewspaperCheck()
-    testPower.render()
     delivererMover()
     gameOverCheck()
 }
