@@ -99,8 +99,8 @@ class Newspaper {
 
 class Powerup {
     constructor() {
-        this.x = 100
-        this.y = 100
+        this.x = 200
+        this.y = 200
         this.width = 5
         this.height = 5
     }
@@ -132,6 +132,9 @@ let newPaper2 = new Newspaper(newPlayer.x, newPlayer.y)
 let newPaper3 = new Newspaper(newPlayer.x, newPlayer.y)
 let newPaper4 = new Newspaper(newPlayer.x, newPlayer.y)
 let newPaper5 = new Newspaper(newPlayer.x, newPlayer.y)
+
+let bonusPaper = new Newspaper(newPlayer.x, newPlayer.y)
+
 let paperArray = [newPaper, newPaper2, newPaper3, newPaper4, newPaper5]
 let neighborhood = [
     leftHouse,
@@ -356,9 +359,22 @@ function resetGameState() {
     thrownPapersLeft = []
 }
 
-function collectNewspaper() {
+function collectNewspaperCheck() {
     //if user hits a newspaper on the ground, add to the newspaper array to make throwable
-    
+    //check if user hits powerup
+    //on collision, add new paper to paperArray
+        //and remove powerup from screen
+    if(newPlayer.x < testPower.x + testPower.height && /* check player left vs powerup right*/
+        newPlayer.x + newPlayer.width > testPower.x  && /* check player right vs powerup left */
+        newPlayer.y < testPower.y + testPower.height && /* check player top vs powerup bottom */
+        newPlayer.y + newPlayer.height > testPower.y /* check player bottom vs powerup top */
+        ){ 
+        console.log("hit bonus newspaper")
+        paperArray.push(bonusPaper)
+        //temporary code to make powerup go away
+        testPower.x = -100
+        testPower.y = -100
+    }
 }
 
 function gameLoop() {
@@ -368,6 +384,8 @@ function gameLoop() {
     updatePaperCountDisplay()
     paperThrowHandler()
     houseMover()
+    collectNewspaperCheck()
+    testPower.render()
     delivererMover()
     gameOverCheck()
 }
