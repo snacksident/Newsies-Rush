@@ -355,8 +355,9 @@ function resetGameState() {
     thrownPapersRight = []
     thrownPapersLeft = []
 }
-//check if player hit powerup for bonus
-function powerupCollision() {
+
+function collectNewspaper() {
+    //if user hits a newspaper on the ground, add to the newspaper array to make throwable
     
 }
 
