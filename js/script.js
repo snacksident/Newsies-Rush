@@ -32,6 +32,157 @@ let userScore = 0
 let gameLoopInterval
 /* GAME FUNCTIONS */
 
+
+
+//houses all have a standard size.  we only pass in location of the house.
+class House {
+    constructor(xLoc, yLoc) {
+        (this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
+        this.isSubscriber = subscriberRandomizer()
+        this.isDelivered = false
+    }
+    render() {
+        if (this.isSubscriber) {
+            ctx.strokeStyle = "green"
+        } else {
+            ctx.strokeStyle = "blue"
+        }
+        if (this.isDelivered) {
+            ctx.strokeStyle = "yellow"
+        }
+        ctx.lineWidth = 2
+        ctx.strokeRect(this.x, this.y, this.width, this.height)
+    }
+    //change the y axis of the house, simulating movement.
+    slide() {
+        this.y +=2
+    }
+}
+//for the paperperson
+class Deliverer {
+    constructor(xLoc, yLoc) {
+        ;(this.x = xLoc), (this.y = yLoc), (this.width = 4), (this.height = 15)
+    }
+    render() {
+        ctx.fillStyle = "green"
+        ctx.lineWidth = 2
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+    }
+}
+//for the thrown newspapers
+class Newspaper {
+    constructor() {
+        this.x = 0 /* x and y values get reassigned as soon as paper becomes thrown */
+        this.y = 0
+        this.width = 3
+        this.height = 3
+    }
+    render() {
+        ctx.strokeStyle = "white"
+        ctx.lineWidth = 1
+        ctx.strokeRect(this.x, this.y, this.width, this.height)
+    }
+    //the paper flies 2px right and 1px down per cycle - staying in line with the houses but heading towards them - left and right
+    flyRight() {
+        this.x += 5
+        // this.y++ /*for making the papers fly 'down' the screen too*/
+    }
+    flyLeft() {
+        this.x -= 5
+        // this.y++ /*for making the papers fly 'down' the screen too*/
+    }
+}
+
+class Powerup {
+    constructor(){
+        this.x = 100
+        this.y = 100
+        this.width = 5
+        this.height = 5
+    }
+    render(){
+        ctx.fillStyle = "white"
+        ctx.lineWidth = 1
+        ctx.fillRect(this.x,this.y,this.width,this.height)
+    }
+}
+
+let testPower = new Powerup()
+
+let leftHouse = new House(5, 5)
+let leftHouse2 = new House(5, 115)
+let leftHouse3 = new House(5, 225)
+let leftHouse4 = new House(5, 335)
+
+let rightHouse = new House(600, 5)
+let rightHouse2 = new House(600, 100)
+let rightHouse3 = new House(600, 230)
+let rightHouse4 = new House(600, 350)
+
+let newPlayer = new Deliverer(300, 300)
+
+let newPaper = new Newspaper(newPlayer.x, newPlayer.y)
+let newPaper2 = new Newspaper(newPlayer.x, newPlayer.y)
+let newPaper3 = new Newspaper(newPlayer.x, newPlayer.y)
+let newPaper4 = new Newspaper(newPlayer.x, newPlayer.y)
+let newPaper5 = new Newspaper(newPlayer.x, newPlayer.y)
+let paperArray = [newPaper, newPaper2, newPaper3, newPaper4, newPaper5]
+let neighborhood = [
+    leftHouse,
+    rightHouse,
+    leftHouse2,
+    rightHouse2,
+    leftHouse3,
+    rightHouse3,
+    leftHouse4,
+    rightHouse4
+]
+let neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
+let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
+let thrownPapersRight = []
+let thrownPapersLeft = []
+
+//check for when a house 'slides off' the screen, remove it from neighborhood and add it back to the top - "endless" functionality
+function houseMover() {
+    neighborhood.forEach((house) => {
+        house.render()
+        house.slide()
+        if (house.y > 400) {
+            house.y = -80
+            // house.isSubscriber = subscriberRandomizer()
+            //set house to be valid for points again
+            house.isDelivered = false
+        }
+    })
+}
+
+//checks key press inputs for 4 movement directions
+//need to add a way to keep user within certain boundaries
+function delivererMover() {
+    //find way to not let player drive off board (user >x0, >y0, <x600, <y500).  check x/y coords to make sure they're in play area.
+        if (pressedKeys.a) {
+            newPlayer.x -= 2
+        }
+        if (pressedKeys.d) {
+            newPlayer.x += 2
+        }
+        if (pressedKeys.w) {
+            newPlayer.y -= 2
+        }
+        if (pressedKeys.s) {
+            newPlayer.y += 2
+        }
+}
+//randomly selects if a house is a subscriber or not when being replaced
+function subscriberRandomizer() {
+    let rand = Math.floor(Math.random() * 2)
+    if (rand === 1) {
+        return true
+    } else {
+        return false
+    }
+}
+
 /* kind of works, needs a re-visit */
 /* currently will tell a paper it was delivered if the house slides into it from the top as well*/
 function detectPaperDelivery() {
@@ -85,141 +236,6 @@ function detectPaperDelivery() {
             thrownPapersRight.shift()
         }
     })
-}
-
-//houses all have a standard size.  we only pass in location of the house.
-class House {
-    constructor(xLoc, yLoc) {
-        (this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
-        this.isSubscriber = subscriberRandomizer()
-        this.isDelivered = false
-    }
-    render() {
-        if (this.isSubscriber) {
-            ctx.strokeStyle = "green"
-        } else {
-            ctx.strokeStyle = "blue"
-        }
-        if (this.isDelivered) {
-            ctx.strokeStyle = "yellow"
-        }
-        ctx.lineWidth = 2
-        ctx.strokeRect(this.x, this.y, this.width, this.height)
-    }
-    //change the y axis of the house, simulating movement.
-    slide() {
-        this.y++
-    }
-}
-//for the paperperson
-class Deliverer {
-    constructor(xLoc, yLoc) {
-        ;(this.x = xLoc), (this.y = yLoc), (this.width = 4), (this.height = 15)
-    }
-    render() {
-        ctx.fillStyle = "green"
-        ctx.lineWidth = 2
-        ctx.fillRect(this.x, this.y, this.width, this.height)
-    }
-}
-//for the thrown newspapers
-class Newspaper {
-    constructor(newX, newY) {
-        this.x = newX
-        this.y = newY
-        ;(this.width = 3), (this.height = 3)
-    }
-    render() {
-        ctx.strokeStyle = "white"
-        ctx.lineWidth = 1
-        ctx.strokeRect(this.x, this.y, this.width, this.height)
-    }
-    //the paper flies 2px right and 1px down per cycle - staying in line with the houses but heading towards them - left and right
-    flyRight() {
-        this.x += 5
-        // this.y++ /*for making the papers fly 'down' the screen too*/
-    }
-    flyLeft() {
-        this.x -= 5
-        // this.y++ /*for making the papers fly 'down' the screen too*/
-    }
-}
-
-let leftHouse = new House(5, 5)
-let leftHouse2 = new House(5, 115)
-let leftHouse3 = new House(5, 225)
-let leftHouse4 = new House(5, 335)
-
-let rightHouse = new House(600, 5)
-let rightHouse2 = new House(600, 100)
-let rightHouse3 = new House(600, 230)
-let rightHouse4 = new House(600, 350)
-
-let newPlayer = new Deliverer(300, 300)
-
-let newPaper = new Newspaper(newPlayer.x, newPlayer.y)
-let newPaper2 = new Newspaper(newPlayer.x, newPlayer.y)
-let newPaper3 = new Newspaper(newPlayer.x, newPlayer.y)
-let newPaper4 = new Newspaper(newPlayer.x, newPlayer.y)
-let newPaper5 = new Newspaper(newPlayer.x, newPlayer.y)
-let paperArray = [newPaper, newPaper2, newPaper3, newPaper4, newPaper5]
-let neighborhood = [
-    leftHouse,
-    rightHouse,
-    leftHouse2,
-    rightHouse2,
-    leftHouse3,
-    rightHouse3,
-    leftHouse4,
-    rightHouse4
-]
-let neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
-let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
-let thrownPapersRight = []
-let thrownPapersLeft = []
-
-//check for when a house 'slides off' the screen, remove it from neighborhood and add it back to the top - "endless" functionality
-function houseMover() {
-    neighborhood.forEach((house) => {
-        house.render()
-        house.slide()
-        if (house.y > 400) {
-            house.y = -80
-            // house.isSubscriber = subscriberRandomizer()
-            //set house to be valid for points again
-            house.isDelivered = false
-        }
-    })
-}
-
-//checks key press inputs for 4 movement directions
-//need to add a way to keep user within certain boundaries
-function delivererMover() {
-    //find way to not let player drive off board (x 0, y 0, x600, y500).  check x/y coords to make sure they're in play area.
-    if(newPlayer.x < 0 || newPlayer.x > 500 || newPlayer.y < 0 || newPlayer.y > 500){
-        
-    }
-    if (pressedKeys.a) {
-        newPlayer.x -= 2
-    }
-    if (pressedKeys.d) {
-        newPlayer.x += 2
-    }
-    if (pressedKeys.w) {
-        newPlayer.y -= 2
-    }
-    if (pressedKeys.s) {
-        newPlayer.y += 2
-    }
-}
-//randomly selects if a house is a subscriber or not when being replaced
-function subscriberRandomizer() {
-    let rand = Math.floor(Math.random() * 2)
-    if (rand === 1) {
-        return true
-    } else {
-        return false
-    }
 }
 
 function paperThrowHandler() {
@@ -304,14 +320,20 @@ function resetGameState() {
     thrownPapersRight = []
     thrownPapersLeft = []
 }
+//check if player hit powerup for bonus
+function powerupCollision(){
+    
+}
 
 function gameLoop() {
     //generate houses(neighborhood)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
     updatePaperCountDisplay()
+    testPower.render()
     houseMover()
     delivererMover()
+    powerupCollision()
     newPlayer.render()
     paperThrowHandler()
     gameOverCheck()
