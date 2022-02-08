@@ -30,14 +30,13 @@ let userScore = 0
 
 // currently turning gameloopinterval on and off with the "play game" and "end game" buttons. end game clears screen but pauses object statuses.
 let gameLoopInterval
+
 /* GAME FUNCTIONS */
-
-
 
 //houses all have a standard size.  we only pass in location of the house.
 class House {
     constructor(xLoc, yLoc) {
-        (this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
+        ;(this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
         this.isSubscriber = subscriberRandomizer()
         this.isDelivered = false
     }
@@ -55,7 +54,7 @@ class House {
     }
     //change the y axis of the house, simulating movement.
     slide() {
-        this.y +=2
+        this.y += 2
     }
 }
 //for the paperperson
@@ -94,16 +93,16 @@ class Newspaper {
 }
 
 class Powerup {
-    constructor(){
+    constructor() {
         this.x = 100
         this.y = 100
         this.width = 5
         this.height = 5
     }
-    render(){
+    render() {
         ctx.fillStyle = "white"
         ctx.lineWidth = 1
-        ctx.fillRect(this.x,this.y,this.width,this.height)
+        ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
 
@@ -113,11 +112,13 @@ let leftHouse = new House(5, 5)
 let leftHouse2 = new House(5, 115)
 let leftHouse3 = new House(5, 225)
 let leftHouse4 = new House(5, 335)
+let leftHouse5 = new House(5, 445)
 
 let rightHouse = new House(600, 5)
 let rightHouse2 = new House(600, 100)
 let rightHouse3 = new House(600, 230)
 let rightHouse4 = new House(600, 350)
+let rightHouse5 = new House(600, 460)
 
 let newPlayer = new Deliverer(300, 300)
 
@@ -135,10 +136,24 @@ let neighborhood = [
     leftHouse3,
     rightHouse3,
     leftHouse4,
-    rightHouse4
+    rightHouse4,
+    leftHouse5,
+    rightHouse5,
 ]
-let neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
-let neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
+let neighborhoodLeft = [
+    leftHouse,
+    leftHouse2,
+    leftHouse3,
+    leftHouse4,
+    leftHouse5,
+]
+let neighborhoodRight = [
+    rightHouse,
+    rightHouse2,
+    rightHouse3,
+    rightHouse4,
+    rightHouse5,
+]
 let thrownPapersRight = []
 let thrownPapersLeft = []
 
@@ -147,10 +162,8 @@ function houseMover() {
     neighborhood.forEach((house) => {
         house.render()
         house.slide()
-        if (house.y > 400) {
-            house.y = -80
-            // house.isSubscriber = subscriberRandomizer()
-            //set house to be valid for points again
+        if (house.y > 450) {
+            house.y = -120
             house.isDelivered = false
         }
     })
@@ -159,19 +172,32 @@ function houseMover() {
 //checks key press inputs for 4 movement directions
 //need to add a way to keep user within certain boundaries
 function delivererMover() {
-    //find way to not let player drive off board (user >x0, >y0, <x600, <y500).  check x/y coords to make sure they're in play area.
-        if (pressedKeys.a) {
-            newPlayer.x -= 2
-        }
+    //if player is inside boundaries, move.  do not allow player to cross out of bounds.
+
+    // if (newPlayer.y > 100 && newPlayer.y < 600)
+    // if (newPlayer.x > 100 && newPlayer.x < 600)
+
+    if(newPlayer.x < 600){
         if (pressedKeys.d) {
             newPlayer.x += 2
         }
+    }
+
+    if (newPlayer.x > 100) {
+        if (pressedKeys.a) {
+            newPlayer.x -= 2
+        }
+    }
+    if(newPlayer.y > 50){
         if (pressedKeys.w) {
             newPlayer.y -= 2
         }
+    }
+    if(newPlayer.y < 350){
         if (pressedKeys.s) {
             newPlayer.y += 2
         }
+    }
 }
 //randomly selects if a house is a subscriber or not when being replaced
 function subscriberRandomizer() {
@@ -229,8 +255,6 @@ function detectPaperDelivery() {
                         userScore -= 500
                     }
                     house.isDelivered = true
-                }else{
-                    console.log("missed all houses, no points awarded")
                 }
             })
             thrownPapersRight.shift()
@@ -278,6 +302,7 @@ function gameOverCheck() {
         thrownPapersRight.length === 0
     ) {
         console.log("game over you're out of newspapers")
+        scoreBoard.innerText = `Game Over - Total score ${userScore}`
         console.log(`You ended with ${userScore} points!`)
         clearInterval(gameLoopInterval)
     }
@@ -292,15 +317,20 @@ function updatePaperCountDisplay() {
 }
 
 function resetGameState() {
-    userScore = 0
+    leftHouse = new House(5, 5)
+    leftHouse2 = new House(5, 115)
+    leftHouse3 = new House(5, 225)
+    leftHouse4 = new House(5, 335)
+    leftHouse5 = new House(5, 445)
 
-    leftHouse = new House(5, 5, false)
-    leftHouse2 = new House(5, 115, true)
-    leftHouse3 = new House(5, 225, false)
-    rightHouse = new House(600, 5, true)
-    rightHouse2 = new House(600, 100, false)
-    rightHouse3 = new House(600, 230, true)
+    rightHouse = new House(600, 5)
+    rightHouse2 = new House(600, 100)
+    rightHouse3 = new House(600, 230)
+    rightHouse4 = new House(600, 350)
+    rightHouse5 = new House(600, 460)
+
     newPlayer = new Deliverer(300, 300)
+
     newPaper = new Newspaper(newPlayer.x, newPlayer.y)
     newPaper2 = new Newspaper(newPlayer.x, newPlayer.y)
     newPaper3 = new Newspaper(newPlayer.x, newPlayer.y)
@@ -314,27 +344,39 @@ function resetGameState() {
         rightHouse2,
         leftHouse3,
         rightHouse3,
+        leftHouse4,
+        rightHouse4,
+        leftHouse5,
+        rightHouse5,
     ]
-    neighborhoodLeft = [leftHouse, leftHouse2, leftHouse3]
-    neighborhoodRight = [rightHouse, rightHouse2, rightHouse3]
+    neighborhoodLeft = [
+        leftHouse,
+        leftHouse2,
+        leftHouse3,
+        leftHouse4,
+        leftHouse5,
+    ]
+    neighborhoodRight = [
+        rightHouse,
+        rightHouse2,
+        rightHouse3,
+        rightHouse4,
+        rightHouse5,
+    ]
     thrownPapersRight = []
     thrownPapersLeft = []
 }
 //check if player hit powerup for bonus
-function powerupCollision(){
-    
-}
+function powerupCollision() {}
 
 function gameLoop() {
     //generate houses(neighborhood)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     scoreBoard.innerText = userScore
     updatePaperCountDisplay()
-    testPower.render()
+    paperThrowHandler()
     houseMover()
     delivererMover()
-    powerupCollision()
     newPlayer.render()
-    paperThrowHandler()
     gameOverCheck()
 }
