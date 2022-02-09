@@ -390,6 +390,8 @@ function getRandomInBoundsXValue(){
 function getRandomInBoundsYValue(){
     return Math.floor(Math.random() * (350 - 50 +1)+50)
 }
+
+//places newspapers randomly on level.  would love to have them show up after "x" happens rather than all populate at once.
 function placeExtraNewspapers(){
     if(powerupArray!= 0){
         powerupArray[0].x = getRandomInBoundsXValue()
@@ -408,10 +410,9 @@ function gameLoop() {
     scoreBoard.innerText = userScore
     updatePaperCountDisplay()
     paperThrowHandler()
-    powerup1.render()
+    // placeExtraNewspapers()
     houseMover()
-    placeExtraNewspapers()
-    collectNewspaperCheck()
+    // collectNewspaperCheck()
     delivererMover()
     gameOverCheck()
 }
