@@ -313,7 +313,7 @@ function resetGameState() {
 function collectNewspaperCheck() {
     placedPowerups.forEach((power) => {
         power.render()
-        if(collisionDetect(power,newPlayer)){
+        if(collisionDetect(newPlayer,power)){
             power.x = -100
             power.y = -100
         }
