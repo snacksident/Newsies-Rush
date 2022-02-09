@@ -5,21 +5,18 @@ const paperCountDisplay = document.querySelector(".paper-count")
 const resetButton = document.querySelector(".reset-button")
 const playButton = document.querySelector(".play-button")
 
-//clears gameloop interval, rendering game over.  also clears canvas to blank state.
-//currently functions like a pause button.  screen gets cleared but all rendered objects still have their positions set.
 resetButton.addEventListener("click", () => {
     clearInterval(gameLoopInterval)
     resetGameState()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    gameRunning = false
-    //reset all game-state values in here
 })
+
 playButton.addEventListener("click", () => {
-    if ((gameRunning === false)) {
+    if (gameRunning === false) {
         makeHouses(5)
         makeNewspapers(5)
-        gameLoopInterval = setInterval(gameLoop, 60) //game speed set by interval
-        gameRunning = true
+        makePowerupNewspapers(5)
+        gameLoopInterval = setInterval(gameLoop, 60)
     }
 })
 
@@ -34,14 +31,11 @@ canvas.setAttribute("height", getComputedStyle(canvas)["height"])
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let userScore = 0
 let gameRunning = false
-
-// currently turning gameloopinterval on and off with the "play game" and "end game" buttons. end game clears screen but pauses object statuses.
 let gameLoopInterval
 let paperPlaceInterval
 
 /* GAME FUNCTIONS */
 
-//houses all have a standard size.  we only pass in location of the house.
 class House {
     constructor(xLoc, yLoc) {
         ;(this.x = xLoc), (this.y = yLoc), (this.width = 50), (this.height = 80)
@@ -67,7 +61,7 @@ class House {
         this.y += 2
     }
 }
-//for the paperperson
+
 class Deliverer {
     constructor(xLoc, yLoc) {
         ;(this.x = xLoc),
@@ -84,7 +78,7 @@ class Deliverer {
         ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
-//for the thrown newspapers
+
 class Newspaper {
     constructor() {
         this.x = 0 /* x and y values get reassigned as soon as paper becomes thrown */
@@ -122,22 +116,14 @@ class Powerup {
     }
 }
 
-let powerup1 = new Powerup(getRandomInBoundsXValue(), getRandomInBoundsYValue())
-let powerup2 = new Powerup(200, 200)
-let powerup3 = new Powerup(250, 200)
-let powerupArray = [powerup1, powerup2, powerup3]
-let placedPowerups = []
-
+let powerupArray = []
+let testPowerup = new Powerup(200,200)
+let placedPowerups = [testPowerup]
 let newPlayer = new Deliverer(300, 300)
-
-let bonusPaper = new Newspaper(newPlayer.x, newPlayer.y)
-
 let paperArray = []
 let neighborhood = []
 let neighborhoodLeft = []
-let neighborhoodRight = [
-    
-]
+let neighborhoodRight = []
 let thrownPapersRight = []
 let thrownPapersLeft = []
 
@@ -153,32 +139,37 @@ function houseMover() {
     })
 }
 
-//maybe create set amount of houses in a function. push them into the correct arrays
 function makeHouses(n) {
     let houses = new Array(n)
     let yLoc = 5
     //generates houses on left side of level
     for (let i = 0; i < n; i++) {
-        houses[i] = new House(5,yLoc)
-        houses[i+n] = new House(600,yLoc)
+        houses[i] = new House(5, yLoc)
+        houses[i + n] = new House(600, yLoc)
         neighborhood.push(houses[i])
         neighborhoodLeft.push(houses[i])
-        neighborhood.push(houses[i+n])
-        neighborhoodRight.push(houses[i+n])
+        neighborhood.push(houses[i + n])
+        neighborhoodRight.push(houses[i + n])
         yLoc += 100
     }
 }
 
-function makeNewspapers(n){
+function makeNewspapers(n) {
     let newspapers = new Array(n)
-    for(let i = 0; i < n; i++){
+    for (let i = 0; i < n; i++) {
         newspapers[i] = new Newspaper()
         paperArray.push(newspapers[i])
     }
 }
 
-//checks key press inputs for 4 movement directions
-//need to add a way to keep user within certain boundaries
+function makePowerupNewspapers(n){
+    let powerups = new Array(n)
+    for(let i = 0; i < n; i++){
+        powerups[i] = new Powerup(getRandomInBoundsXValue(),getRandomInBoundsYValue())
+        powerupArray.push(powerups[i])
+    }
+}
+
 function delivererMover() {
     if (newPlayer.x < 600) {
         if (pressedKeys.d) {
@@ -202,24 +193,18 @@ function delivererMover() {
     }
     newPlayer.render()
 }
-//randomly selects if a house is a subscriber or not when being replaced
+
 function subscriberRandomizer() {
     const rand = Math.floor(Math.random() * 2)
     return rand === 1
 }
 
 function detectPaperDelivery() {
-    //check if a papers left side crossed into the "left boundary"
     thrownPapersLeft.forEach((paper) => {
-        //left side value hard coded in as no houses will be placed beyond 55px mark for now
         if (paper.x < 55) {
-            //check if it hit the correct Y value of the each house as well
             neighborhoodLeft.forEach((house) => {
-                if (
-                    paper.y < house.y + house.height &&
-                    paper.y > house.y &&
-                    !house.isDelivered
-                ) {
+                if(collisionDetect(paper,house))
+                {
                     if (house.isSubscriber) {
                         userScore += 1000
                     } else if (!house.isSubscriber) {
@@ -231,17 +216,10 @@ function detectPaperDelivery() {
             thrownPapersLeft.shift()
         }
     })
-    //check if paper crossed into the "right boundary"
     thrownPapersRight.forEach((paper) => {
-        //right side value hard coded in as houses will only be placed on the 600px mark for now
         if (paper.x + paper.width > 600) {
             neighborhoodRight.forEach((house) => {
-                //check if it hit corrects y value of house
-                if (
-                    paper.y < house.y + house.height &&
-                    paper.y > house.y &&
-                    !house.isDelivered
-                ) {
+                if (collisionDetect(paper,house)) {
                     if (house.isSubscriber) {
                         userScore += 1000
                     } else if (!house.isSubscriber) {
@@ -253,6 +231,17 @@ function detectPaperDelivery() {
             thrownPapersRight.shift()
         }
     })
+}
+
+//might be a better dry way to check object collision?
+function collisionDetect(obj1,obj2){
+    if(obj1.x < obj2.x + obj2.height &&
+       obj1.x + obj1.width > obj2.x &&
+       obj1.y < obj2.y + obj2.height &&
+       obj1.y + obj1.height > obj2.y ){
+           console.log("collision detected")
+           return true
+       }
 }
 
 function paperThrowHandler() {
@@ -287,7 +276,6 @@ function paperThrowHandler() {
     detectPaperDelivery()
 }
 
-//checks to see if all newspaper arrays are empty (out of paper) - no more ways to get points
 function gameOverCheck() {
     if (
         paperArray.length === 0 &&
@@ -307,43 +295,25 @@ function updatePaperCountDisplay() {
     paperCountDisplay.innerText = sentence
 }
 
-//currently resets all gamestate variables back to "initial" value.
 function resetGameState() {
     userScore = 0
 
-    powerup1 = new Powerup(getRandomInBoundsXValue(), getRandomInBoundsYValue())
-    powerup2 = new Powerup(200, 200)
-    powerup3 = new Powerup(250, 200)
-    powerupArray = [powerup1, powerup2, powerup3]
     placedPowerups = []
-
+    powerupArray = []
     newPlayer = new Deliverer(300, 300)
-
     paperArray = []
     neighborhood = []
     neighborhoodLeft = []
     neighborhoodRight = []
     thrownPapersRight = []
     thrownPapersLeft = []
+    gameRunning = false
 }
 
 function collectNewspaperCheck() {
     placedPowerups.forEach((power) => {
-        if (
-            newPlayer.x <
-                power.x +
-                    power.height /* check player left vs powerup right*/ &&
-            newPlayer.x + newPlayer.width >
-                power.x /* check player right vs powerup left */ &&
-            newPlayer.y <
-                power.y +
-                    power.height /* check player top vs powerup bottom */ &&
-            newPlayer.y + newPlayer.height >
-                power.y /* check player bottom vs powerup top */
-        ) {
-            console.log("hit bonus newspaper")
-            paperArray.push(bonusPaper)
-            //temporary code to make powerup go away
+        power.render()
+        if(collisionDetect(power,newPlayer)){
             power.x = -100
             power.y = -100
         }
@@ -353,21 +323,9 @@ function collectNewspaperCheck() {
 function getRandomInBoundsXValue() {
     return Math.floor(Math.random() * (600 - 100 + 1) + 100)
 }
+
 function getRandomInBoundsYValue() {
     return Math.floor(Math.random() * (350 - 50 + 1) + 50)
-}
-
-//places newspapers randomly on level.  would love to have them show up after "x" happens rather than all populate at once.
-function placeExtraNewspapers() {
-    if (powerupArray.length != 0) {
-        powerupArray[0].x = getRandomInBoundsXValue()
-        powerupArray[0].y = getRandomInBoundsYValue()
-        placedPowerups.push(powerupArray[0])
-        powerupArray.shift()
-    }
-    for (let i = 0; i < placedPowerups.length; i++) {
-        placedPowerups[i].render()
-    }
 }
 
 function gameLoop() {
@@ -375,9 +333,9 @@ function gameLoop() {
     scoreBoard.innerText = userScore
     updatePaperCountDisplay()
     paperThrowHandler()
-    // placeExtraNewspapers()
     houseMover()
-    // collectNewspaperCheck()
+    collectNewspaperCheck()
     delivererMover()
     gameOverCheck()
+    gameRunning = true
 }
