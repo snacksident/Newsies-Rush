@@ -17,6 +17,7 @@ playButton.addEventListener("click", () => {
         makeNewspapers(5)
         makePowerupNewspapers(5)
         gameLoopInterval = setInterval(gameLoop, 60)
+        powerupPlaceInterval = setInterval(placePowerups,5000)
     }
 })
 
@@ -32,7 +33,7 @@ canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let userScore = 0
 let gameRunning = false
 let gameLoopInterval
-let paperPlaceInterval
+let powerupPlaceInterval
 
 /* GAME FUNCTIONS */
 
@@ -117,8 +118,7 @@ class Powerup {
 }
 
 let powerupArray = []
-let testPowerup = new Powerup(200,200)
-let placedPowerups = [testPowerup]
+let placedPowerups = []
 let newPlayer = new Deliverer(300, 300)
 let paperArray = []
 let neighborhood = []
@@ -168,6 +168,11 @@ function makePowerupNewspapers(n){
         powerups[i] = new Powerup(getRandomInBoundsXValue(),getRandomInBoundsYValue())
         powerupArray.push(powerups[i])
     }
+}
+
+function placePowerups(){
+    placedPowerups.push(powerupArray[0])
+    powerupArray.slice()
 }
 
 function delivererMover() {
@@ -238,10 +243,7 @@ function collisionDetect(obj1,obj2){
     if(obj1.x < obj2.x + obj2.height &&
        obj1.x + obj1.width > obj2.x &&
        obj1.y < obj2.y + obj2.height &&
-       obj1.y + obj1.height > obj2.y ){
-           console.log("collision detected")
-           return true
-       }
+       obj1.y + obj1.height > obj2.y )return true
 }
 
 function paperThrowHandler() {
@@ -310,12 +312,13 @@ function resetGameState() {
     gameRunning = false
 }
 
-function collectNewspaperCheck() {
+function collectPowerupCheck() {
     placedPowerups.forEach((power) => {
         power.render()
         if(collisionDetect(newPlayer,power)){
             power.x = -100
             power.y = -100
+            makeNewspapers(1)
         }
     })
 }
@@ -334,7 +337,7 @@ function gameLoop() {
     updatePaperCountDisplay()
     paperThrowHandler()
     houseMover()
-    collectNewspaperCheck()
+    collectPowerupCheck()
     delivererMover()
     gameOverCheck()
     gameRunning = true
