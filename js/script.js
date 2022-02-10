@@ -93,7 +93,7 @@ class Newspaper {
         ctx.lineWidth = 1
         ctx.strokeRect(this.x, this.y, this.width, this.height)
     }
-    //the paper flies 2px right and 1px down per cycle - staying in line with the houses but heading towards them - left and right
+    
     flyRight() {
         this.x += 5
         // this.y++ /*for making the papers fly 'down' the screen too*/
@@ -120,7 +120,7 @@ class Powerup {
 
 let powerupArray = []
 let placedPowerups = []
-let newPlayer = new Deliverer(300, 300)
+let newPlayer = new Deliverer(350, 300)
 let paperArray = []
 let neighborhood = []
 let neighborhoodLeft = []
@@ -146,7 +146,7 @@ function makeHouses(n) {
     //generates houses on left side of level
     for (let i = 0; i < n; i++) {
         houses[i] = new House(5, yLoc)
-        houses[i + n] = new House(600, yLoc)
+        houses[i + n] = new House(700, yLoc)
         neighborhood.push(houses[i])
         neighborhoodLeft.push(houses[i])
         neighborhood.push(houses[i + n])
@@ -226,7 +226,7 @@ function detectPaperDelivery() {
         }
     })
     thrownPapersRight.forEach((paper) => {
-        if (paper.x + paper.width > 600) {
+        if (paper.x + paper.width > 700) {
             neighborhoodRight.forEach((house) => {
                 if (collisionDetect(paper,house)) {
                     if (house.isSubscriber) {
