@@ -177,7 +177,6 @@ function placePowerups(){
     powerupArray[0].x = getRandomInBoundsXValue()
     powerupArray[0].y = getRandomInBoundsYValue()
     placedPowerups.push(powerupArray[0])
-    console.log(`placed a powerup - current placed powerups are ${placedPowerups.length}`)
     powerupArray.slice()
 }
 
