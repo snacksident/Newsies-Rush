@@ -2,12 +2,14 @@
 
 For this project I'd like to re-imagine the classic Paperboy video game.  In this game you assume the role of a newspaper delivery person making your way through a neighborhood, delivering newspapers!  The base gameplay should be pretty representative of the original games in the series.
 
-Stretch goals include powerup functionality (additional newspapers the player can collect to extend their run)
+Completed stretch goals include powerup functionality (additional newspapers the player can collect to extend their run)
 
 ___
 ## Technical Overview
 
-I placed all "house" objects into a single array which has a constantly increasing "Y Location" variable to simulate movement through the neighborhood.  The deliveryperson is controlled by keydown/keyup inputs - classic WASD movement.  Gameplay happens on a pretty quick loop of 60ms to help the game feel smooth.  Powerups (bonus newspapers) generate on the level every 5 seconds, but disappear as soon as the next powerup is placed.
+All objects on screen are objects constructed at game-start - each with differing x/y locations on the play-area.
+
+I placed all "house" objects into a single array which has a constantly increasing "Y Location" variable to simulate movement through the neighborhood.  Houses "subscriber" status is randomized when the houses are initialized.  The deliveryperson is controlled by keydown/keyup inputs - classic WASD movement.  Gameplay happens on a pretty quick loop of 60ms to help the game feel smooth.  Powerups (bonus newspapers) generate on the level every 5 seconds, but disappear as soon as the next powerup is placed.
 
 Instead of importing images for my visuals, I decided the "retro" look was better than any other alternatives I attempted.  The player is represented by a narrow rectangle (a bicycle and its rider), houses are be large rectangles on the sides of the screen(different color borders to represent), and newspapers are small white squares.
 
@@ -29,7 +31,7 @@ Gameloop consists of:
 
 * Checking for game-over (out of papers)
 
-Collision detection 
+* Collision detection (player picking up powerups, newspapers being 'delivered')
 
 
 ___

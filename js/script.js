@@ -290,6 +290,7 @@ function gameOverCheck() {
     ) {
         scoreBoard.innerText = `Game Over - Total score ${userScore}`
         clearInterval(gameLoopInterval)
+        clearInterval(powerupPlaceInterval)
     }
 }
 
