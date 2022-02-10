@@ -1,5 +1,6 @@
 body{
-    background-color: slategray
+    background-color: slategray;
+    font-family: 'Press Start 2P', cursive;
 }
 
 canvas{
@@ -55,7 +56,8 @@ canvas{
 }
 
 .directions{
-    background-color: white
+    background-color: white;
+    font-size: 13px;
 }
 
 main{
