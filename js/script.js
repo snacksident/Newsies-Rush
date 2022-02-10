@@ -7,6 +7,7 @@ const playButton = document.querySelector(".play-button")
 
 resetButton.addEventListener("click", () => {
     clearInterval(gameLoopInterval)
+    clearInterval(powerupPlaceInterval)
     resetGameState()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 })
@@ -133,7 +134,7 @@ function houseMover() {
         house.render()
         house.slide()
         if (house.y > 450) {
-            house.y = -120
+            house.y = -100
             house.isDelivered = false
         }
     })
@@ -150,7 +151,7 @@ function makeHouses(n) {
         neighborhoodLeft.push(houses[i])
         neighborhood.push(houses[i + n])
         neighborhoodRight.push(houses[i + n])
-        yLoc += 100
+        yLoc += 110
     }
 }
 
@@ -165,13 +166,16 @@ function makeNewspapers(n) {
 function makePowerupNewspapers(n){
     let powerups = new Array(n)
     for(let i = 0; i < n; i++){
-        powerups[i] = new Powerup(getRandomInBoundsXValue(),getRandomInBoundsYValue())
+        powerups[i] = new Powerup(-100,-100)
         powerupArray.push(powerups[i])
     }
 }
 
 function placePowerups(){
+    powerupArray[0].x = getRandomInBoundsXValue()
+    powerupArray[0].y = getRandomInBoundsYValue()
     placedPowerups.push(powerupArray[0])
+    console.log(`placed a powerup - current placed powerups are ${placedPowerups.length}`)
     powerupArray.slice()
 }
 
@@ -313,14 +317,16 @@ function resetGameState() {
 }
 
 function collectPowerupCheck() {
-    placedPowerups.forEach((power) => {
-        power.render()
-        if(collisionDetect(newPlayer,power)){
-            power.x = -100
-            power.y = -100
-            makeNewspapers(1)
-        }
-    })
+    if(placedPowerups.length >=1 ){
+        placedPowerups.forEach((power) => {
+            power.render()
+            if(collisionDetect(newPlayer,power)){
+                power.x = -100
+                power.y = -100
+                makeNewspapers(1)
+            }
+        })
+    }
 }
 
 function getRandomInBoundsXValue() {
