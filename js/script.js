@@ -10,6 +10,7 @@ resetButton.addEventListener("click", () => {
     clearInterval(powerupPlaceInterval)
     resetGameState()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    paperCountDisplay.innerText = "Game state pause/game over"
 })
 
 playButton.addEventListener("click", () => {
