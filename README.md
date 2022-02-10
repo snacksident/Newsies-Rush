@@ -1,19 +1,47 @@
 ## Newsies Rush
 
-For this project I'd like to re-imagine the classic Paperboy video game!  
+For this project I'd like to re-imagine the classic Paperboy video game.  In this game you assume the ride of a newspaper delivery person making your way through a neighborhood, delivering newspapers!  The base gameplay should be pretty representative of the original games in the series.
+
+Stretch goals include powerup functionality (additional newspapers the player can collect to extend their run)
 
 ___
+## Technical Overview
+
+I placed all "house" objects into a single array which has a constantly increasing "Y Location" variable to simulate movement through the neighborhood.  The deliveryperson is controlled by keydown/keyup inputs - classic WASD movement.  Gameplay happens on a pretty quick loop of 60ms to help the game feel smooth.  Powerups (bonus newspapers) generate on the level every 5 seconds, but disappear as soon as the next powerup is placed.
+
+Instead of importing images for my visuals, I decided the "retro" look was better than any other alternatives I attempted.  The player is represented by a narrow rectangle (a bicycle and its rider), houses are be large rectangles on the sides of the screen(different color borders to represent), and newspapers are small white squares.
+
+When the start button is pressed: 
+
+* House objects are created and placed into their correct arrays (left/right side of screen)
+
+* Intervals started for gameloop and powerup placement
+
+Gameloop consists of:
+
+* Clearing all rendered objects
+
+* Updating all score/status screens
+
+* Moving houses down the Y axis / re-rendering all houses
+
+* Checking for powerup pickup
+
+* Checking for game-over (out of papers)
+
+Collision detection 
 
 
+___
 ## About The Game
 
-This game is viewed top-down as you ride through a neighborhood, delivering newspapers to the houses that have signed up, and not delivering to those who didn't want the paper - all while dodging obstacles!  If you give newspapers to people who did not request them, that's a lost profit!  If you throw a newspaper perfectly onto a subscribers doorstep or mailbox, you get a tip from them, increasing your score!  But don't just go as fast as you can - some houses have junk in their yards, some may even have dogs that chase you!
+This game is viewed top-down as you ride through a neighborhood, delivering newspapers to the houses that are "subscribers", and not delivering to those who didn't want the paper!  If you give newspapers to people who did not request them, that's a lost profit!  If you throw a newspaper perfectly onto a subscribers doorstep or mailbox, you get a tip from them, increasing your score!  But don't just go as fast as you can - some houses have junk in their yards, some may even have dogs that chase you!
 
 ![Rough sketch of game](roughdraftp1img.png)
 ___
 ## Tech Being Used:
 
-* HTML/CSS - Canvas to play the game
+* HTML/CSS - Gameplay happens in a Canvas element
 
 * Javascript
 
@@ -23,39 +51,39 @@ ___
 
 ## MVP Checklist:
 
-* Render a neighborhood - pop up directions and start button
+- [x] Render a neighborhood
 
-* Randomly select which houses are subscribers and not
+- [x] Randomly select which houses are subscribers and not
 
-* Score money for delivering to correct houses
+- [x] Score points for delivering to correct houses
 
-* Bicycle automatically rides through neighborhood, ability to toss papers left or right
+- [x] Bicycle automatically rides through neighborhood, ability to toss papers left or right
 
-* Restart / Play Again button
+- [x] Restart / Play Again button
 
-* Game ends when newspaper runs out or user score threshold is met
+- [x] Game ends when newspaper runs out or user score threshold is met
 
-* Display score - updating as user scores points
+- [x] Display score - updating as user scores points
 
 ___
 ## Stretch Goals:
 
-* Some houses have pets to chase you
+- [ ] Some houses have pets to chase you
 
-* User has *some* control of x/y location of bike
+- [x] User has control of x/y location of bike
 
 * Score extra money for delivering the paper *accurately*
 
-* Lose money for delivering to houses that have not subscribed to the newspaper
+- [x] Lose money for delivering to houses that have not subscribed to the newspaper
 
 * Create obstacles in the neighborhood that you can crash into - slowing you down.
 
 * Multiple difficulties
 
-* Powerups (speed boost, invincible, extra time)
+- [x] Powerups
 
-* Traffic
+    - [x] extra newspapers
 
-* Bike selection (different stats)
+    - [ ] speed boost
 
 * Graphics overhaul
