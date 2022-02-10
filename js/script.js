@@ -70,7 +70,8 @@ class Deliverer {
             (this.y = yLoc),
             (this.width = 4),
             (this.height = 15),
-            (this.hasPowerup = false)
+            (this.hasPowerup = false),
+            (this.speed = 3)
     }
     render() {
         if (this.hasPowerup) {
@@ -180,24 +181,24 @@ function placePowerups(){
 }
 
 function delivererMover() {
-    if (newPlayer.x < 600) {
+    if (newPlayer.x < 670) {
         if (pressedKeys.d) {
-            newPlayer.x += 2
+            newPlayer.x += newPlayer.speed
         }
     }
     if (newPlayer.x > 100) {
         if (pressedKeys.a) {
-            newPlayer.x -= 2
+            newPlayer.x -= newPlayer.speed
         }
     }
     if (newPlayer.y > 50) {
         if (pressedKeys.w) {
-            newPlayer.y -= 2
+            newPlayer.y -= newPlayer.speed
         }
     }
     if (newPlayer.y < 350) {
         if (pressedKeys.s) {
-            newPlayer.y += 2
+            newPlayer.y += newPlayer.speed
         }
     }
     newPlayer.render()
