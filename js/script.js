@@ -107,16 +107,19 @@ class Newspaper {
 }
 
 class Powerup {
-    constructor(newX, newY) {
-        this.x = newX
-        this.y = newY
+    constructor(powerupType) {
+        this.x = -100
+        this.y = -100
         this.width = 5
         this.height = 5
+        this.type = powerupType
     }
     render() {
-        ctx.fillStyle = "white"
-        ctx.lineWidth = 1
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        if(this.type === "extraNewspaper"){
+            ctx.fillStyle = "white"
+            ctx.lineWidth = 1
+            ctx.fillRect(this.x, this.y, this.width, this.height)
+        }
     }
 }
 
@@ -168,7 +171,15 @@ function makeNewspapers(n) {
 function makePowerupNewspapers(n){
     let powerups = new Array(n)
     for(let i = 0; i < n; i++){
-        powerups[i] = new Powerup(-100,-100)
+        powerups[i] = new Powerup("extraNewspaper")
+        powerupArray.push(powerups[i])
+    }
+}
+//possibly add speedboost function
+function makePowerupSpeedboost(n){
+    let powerups = new Array(n)
+    for(let i = 0; i < n; i++){
+        powerups[i] = new Powerup("speedBoost")
         powerupArray.push(powerups[i])
     }
 }
@@ -325,7 +336,9 @@ function collectPowerupCheck() {
             if(collisionDetect(newPlayer,power)){
                 power.x = -100
                 power.y = -100
-                makeNewspapers(1)
+                if(power.type === "extraNewspaper"){
+                    makeNewspapers(1)
+                }
             }
         })
     }
