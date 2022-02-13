@@ -25,8 +25,24 @@ playButton.addEventListener("click", () => {
 
 //tracking keypresses inside object with boolean values.
 let pressedKeys = {}
-document.addEventListener("keydown", (e) => (pressedKeys[e.key] = true))
-document.addEventListener("keyup", (e) => (pressedKeys[e.key] = false))
+let fired = false
+document.addEventListener("keydown", (e) =>{
+    // pressedKeys[e.key] = true
+    if(!fired && (e.key === 'q' || e.key==='e')){
+        console.log("changing fired to true")
+        pressedKeys[e.key] = true
+        fired = true
+    }else if(!e.key==='q' || !e.key==='e'){
+        pressedKeys[e.key] = true
+    }
+} )
+document.addEventListener("keyup", (e) =>{
+    pressedKeys[e.key] = false
+    if(e.key==='q' || e.key==='e'){
+        console.log("changing fired to false")
+        fired = false
+    }
+} )
 
 /* GAME STATE */
 const ctx = canvas.getContext("2d")
@@ -36,6 +52,7 @@ let userScore = 0
 let gameRunning = false
 let gameLoopInterval
 let powerupPlaceInterval
+
 
 /* GAME FUNCTIONS */
 
@@ -254,7 +271,6 @@ function detectPaperDelivery() {
     })
 }
 
-//might be a better dry way to check object collision?
 function collisionDetect(obj1,obj2){
     if(obj1.x < obj2.x + obj2.height &&
        obj1.x + obj1.width > obj2.x &&
@@ -265,7 +281,7 @@ function collisionDetect(obj1,obj2){
 function paperThrowHandler() {
     //when key is pressed - remove paper from paperArray and add to new thrownPapers array
     if (paperArray.length != 0) {
-        if (pressedKeys.q) {
+        if (pressedKeys.q && !fired ) {
             //set paper location to users current location
             paperArray[0].x = newPlayer.x
             paperArray[0].y = newPlayer.y
