@@ -40,6 +40,8 @@ ___
 This game is viewed top-down as you ride through a neighborhood, delivering newspapers to the houses that are "subscribers", and not delivering to those who didn't want the paper!  If you give newspapers to people who did not request them, that's a lost profit!  If you throw a newspaper perfectly onto a subscribers doorstep or mailbox, you get a tip from them, increasing your score!  But don't just go as fast as you can - some houses have junk in their yards, some may even have dogs that chase you!
 
 ![Rough sketch of game](roughdraftp1img.png)
+
+[Link to current version of game](https://snacksident.github.io/Newsies-Rush/)
 ___
 ## Tech Being Used:
 
@@ -89,3 +91,8 @@ ___
     - [ ] speed boost
 
 - [ ] Graphics overhaul
+
+
+## Resources:
+
+* NES.css (and their recommended font from google fonts)
