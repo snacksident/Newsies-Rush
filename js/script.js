@@ -25,22 +25,19 @@ playButton.addEventListener("click", () => {
 
 //tracking keypresses inside object with boolean values.
 let pressedKeys = {}
-let fired = false
+let paperThrown = false
 document.addEventListener("keydown", (e) =>{
-    // pressedKeys[e.key] = true
-    if(!fired && (e.key === 'q' || e.key==='e')){
-        console.log("changing fired to true")
-        pressedKeys[e.key] = true
-        fired = true
-    }else if(!e.key==='q' || !e.key==='e'){
-        pressedKeys[e.key] = true
-    }
+    pressedKeys[e.key] = true
+    // if(e.key === 'q' || e.key === 'e'){
+    //     if(!paperThrown){
+    //         paperThrown = true
+    //     }
+    // }
 } )
 document.addEventListener("keyup", (e) =>{
-    pressedKeys[e.key] = false
-    if(e.key==='q' || e.key==='e'){
-        console.log("changing fired to false")
-        fired = false
+    if(e.key !== 'q' || e.key !== 'e'){
+        pressedKeys[e.key] = false
+        
     }
 } )
 
@@ -281,7 +278,7 @@ function collisionDetect(obj1,obj2){
 function paperThrowHandler() {
     //when key is pressed - remove paper from paperArray and add to new thrownPapers array
     if (paperArray.length != 0) {
-        if (pressedKeys.q && !fired ) {
+        if (pressedKeys.q) {
             //set paper location to users current location
             paperArray[0].x = newPlayer.x
             paperArray[0].y = newPlayer.y
@@ -308,6 +305,8 @@ function paperThrowHandler() {
         thrownPapersRight[i].flyRight()
     }
     detectPaperDelivery()
+    pressedKeys.q = false
+    pressedKeys.e = false
 }
 
 function gameOverCheck() {
