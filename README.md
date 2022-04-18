@@ -1,6 +1,6 @@
 ## Newsies Rush
 
-For this project I'd like to re-imagine the classic Paperboy video game.  In this game you assume the role of a newspaper delivery person making your way through a neighborhood, delivering newspapers!  The base gameplay should be pretty representative of the original games in the series.
+This project is a re-imagination the classic Paperboy video game.  In this game you assume the role of a newspaper delivery person making your way through a neighborhood, delivering newspapers!  The base gameplay should be pretty representative of the original games in the series.
 
 Completed stretch goals include powerup functionality (additional newspapers the player can collect to extend their run)
 
@@ -53,7 +53,7 @@ ___
 
 ___
 
-## MVP Checklist:
+## Features:
 
 - [x] Render a neighborhood
 
@@ -70,7 +70,7 @@ ___
 - [x] Display score - updating as user scores points
 
 ___
-## Stretch Goals:
+## Future Plans:
 
 - [ ] Some houses have pets to chase you
 
